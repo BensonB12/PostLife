@@ -58,3 +58,26 @@
     end
 } def
 
+/assert-are-equal {
+	0 dict begin
+    /observed arg
+    /expected arg
+    observed type expected type eq not 
+    observed expected eq not or {
+    (bad. expected something else) print stop} if
+	end
+} def
+
+/assert-are-equal-array {
+	0 dict begin
+    /observed arg
+    /expected arg
+    observed length expected length ne {(not the same length) print stop} if
+
+    0 1 observed length 1 sub
+    {/i arg 
+    observed i get expected i get ne {(not the same array) print stop} if
+    } for 
+    end
+} def
+
