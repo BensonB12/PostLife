@@ -22,7 +22,7 @@
     /y 0 def
     3 {
         5 { 
-            1  theboard x get y pstack  get eq { 
+            1  theboard x get y get eq { 
                 /xpos x def 
                 /ypos y def
                 xpos 100 mul
@@ -66,3 +66,10 @@ end
 board drawboard
 showpage
 
+/checkalive {
+    /board arg
+    /x arg
+    /y arg
+    
+    
+} def
