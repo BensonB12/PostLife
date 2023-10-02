@@ -1,62 +1,35 @@
 /arg {exch def} def
 
 % size x y drawsquare
-/drawsquare {
-    0 dict begin
-    /y arg
-    /x arg
-    /size arg
-
-    newpath 
-    x y moveto
-    x size add y lineto
-    x size add y size add lineto
-    x y size add lineto
-    x y lineto
-    fill
-    end
+/drawsquare { 1 dict begin
+          /size argument
+          newpath
+          moveto
+          0 size rlineto
+          size 0 rlineto
+          0 size neg rlineto
+          size 0 rlineto
+          fill
 } def
 
-/drawEntireBoard {
-    0 dict begin
-
-    /grid arg
-
-    grid aload
-    pop 
-
-    0 drawASingleRow
-    1 drawASingleRow
-    2 drawASingleRow
-    end
-} def
-
-/drawASingleRow
-{
-    0 dict begin
-
-    /rowNum arg
-    /rowValues arg
-
-    rowValues aload
-    %length %removes the top array and puts the length of it on top
-    %/l arg
-
-    0 0 setrgbcolor
-    20 80 rowNum 20 mul drawsquare
-    0 0 setrgbcolor
-    20 60 rowNum 20 mul drawsquare
-    0 0 setrgbcolor
-    20 40 rowNum 20 mul drawsquare
-    0 0 setrgbcolor
-    20 20 rowNum 20 mul drawsquare
-    0 0 setrgbcolor
-    20 0 rowNum 20 mul drawsquare
-
-    %Foreach through the values, putting them in the right rowNum
-
-    end
-} def
+/drawboard {
+    /theboard argument
+    /x 0 def
+    /y 0 def
+    3 {
+        5 { 
+            1 theboard x get y get eq {
+                /xpos x def 
+                /ypos y def
+                xpos 100 mul
+                ypos 100 mul 
+                xpos ypos 100 square
+            }
+            /y y 1 add def
+        } repeat
+        /x x 1 add def 
+    } repeat
+} def 
 
 /assert-are-equal {
 	0 dict begin
@@ -81,3 +54,11 @@
     end
 } def
 
+/board { 
+[[0 0 0 1 0]
+[0 0 0 1 0]
+[0 0 0 1 0]] } def 
+
+.5 .5 .5 setrgbcolor
+board drawboard
+showpage
