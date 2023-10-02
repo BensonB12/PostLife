@@ -1,8 +1,12 @@
-/arg {exch def} def
+/arg{exch def} def
+/board { 
+[[0 0 0 1 0]
+[0 1 0 1 0]
+[1 0 0 1 0]] } def 
 
 % size x y drawsquare
 /drawsquare { 1 dict begin
-          /size argument
+          /size arg
           newpath
           moveto
           0 size rlineto
@@ -12,23 +16,25 @@
           fill
 } def
 
-/drawboard {
-    /theboard argument
+/drawboard { 1 dict begin
+    /theboard arg
     /x 0 def
     /y 0 def
     3 {
         5 { 
-            1 theboard x get y get eq {
+            1  theboard x get y pstack  get eq { 
                 /xpos x def 
                 /ypos y def
                 xpos 100 mul
-                ypos 100 mul 
-                xpos ypos 100 square
-            }
+                ypos 100 mul
+                100 drawsquare
+            } if
             /y y 1 add def
         } repeat
+        /y 0 def
         /x x 1 add def 
     } repeat
+end
 } def 
 
 /assert-are-equal {
@@ -54,11 +60,9 @@
     end
 } def
 
-/board { 
-[[0 0 0 1 0]
-[0 0 0 1 0]
-[0 0 0 1 0]] } def 
 
-.5 .5 .5 setrgbcolor
+
+1 0 0 setrgbcolor
 board drawboard
 showpage
+
