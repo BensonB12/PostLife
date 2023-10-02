@@ -1,8 +1,19 @@
 /arg{exch def} def
 /board { 
-[[0 0 0 1 0]
-[0 1 0 1 0]
-[1 0 0 1 0]] } def 
+[
+[0 0 0 1 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 1 0 0 0 0 0 0 0 0]
+[0 0 0 1 0 0 0 0 0 0 0 0]
+[0 0 0 1 0 0 0 0 0 0 0 0]
+[0 0 0 1 0 0 0 0 0 0 0 0]
+[0 0 0 1 0 0 0 0 0 0 0 0]
+[0 0 0 1 0 0 0 0 0 0 0 0]
+[0 0 0 1 0 0 0 0 0 0 0 0]
+[0 0 0 1 0 0 0 0 0 0 0 0]
+[0 0 0 1 0 0 0 0 0 0 0 0]
+[0 0 0 1 0 0 0 0 0 0 0 0]
+] } def 
 
 % size x y drawsquare
 /drawsquare { 1 dict begin
@@ -17,12 +28,12 @@
 } def
 
 /drawboard { 1 dict begin
-    /theboard arg
+    /board arg
     /x 0 def
     /y 0 def
-    3 {
-        5 { 
-            1  theboard x get y get eq { 
+    board length {
+        board 0 get length { 
+            1  board x get y get eq { 
                 /xpos x def 
                 /ypos y def
                 xpos 100 mul
@@ -60,16 +71,73 @@ end
     end
 } def
 
-
-
 1 0 0 setrgbcolor
 board drawboard
 showpage
 
+%Takes in (x y board) returns true or false 
 /checkalive {
     /board arg
-    /x arg
     /y arg
+    /x arg
+    /i -1 def 
+    /j -1 def
+    /alivecells 0 def
+    3 {
+        3 { 
+            i x add 12 lt 
+            {
+            	i x add 0 lt 
+        		{}
+            	{
+                	j y add 0 lt 
+                	{}
+                	{
+                		j y add 12 lt
+                        {
+                         	0 i eq 0 j eq eq  {} 
+            				{
+                            	/alivecells
+            					board i x add get 
+                				j y add get
+                				alivecells add def
+            				}
+            				ifelse
+                        }
+                        {}
+                        ifelse
+                		
+                	}
+                	ifelse
+            		
+            	}
+            	ifelse 
+            }
+            {}
+            ifelse
+            
+            /i i 1 add def 
+        } repeat
+        /i -1 def
+        /j j 1 add def 
+    } repeat
     
-    
+    alivecells 3 lt 
+    { 
+    	alivecells 0 eq
+    	{ false }
+        { true }
+    	ifelse
+    }
+    { false }
+    ifelse
 } def
+
+
+0 0 board checkalive
+pstack
+pop
+
+3 10 board checkalive
+pstack
+pop
