@@ -1,8 +1,8 @@
 /arg{exch def} def
 /board { 
 [
-[0 0 0 1 0 0 0 0 0 0 0 0]
-[0 0 0 0 0 0 0 0 0 0 0 0]
+[1 0 0 1 0 0 0 0 0 0 0 0]
+[0 0 1 1 1 0 0 0 0 0 0 0]
 [0 0 0 1 0 0 0 0 0 0 0 0]
 [0 0 0 1 0 0 0 0 0 0 0 0]
 [0 0 0 1 0 0 0 0 0 0 0 0]
@@ -14,6 +14,23 @@
 [0 0 0 1 0 0 0 0 0 0 0 0]
 [0 0 0 1 0 0 0 0 0 0 0 0]
 ] } def 
+
+/deleteboard {
+[
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+]
+} def
 
 % size x y drawsquare
 /drawsquare { 1 dict begin
@@ -36,9 +53,9 @@
             1  board x get y get eq { 
                 /xpos x def 
                 /ypos y def
-                xpos 100 mul
-                ypos 100 mul
-                100 drawsquare
+                ypos 50 mul
+                board length xpos 1 add sub 50 mul
+                50 drawsquare
             } if
             /y y 1 add def
         } repeat
@@ -71,12 +88,12 @@ end
     end
 } def
 
-1 0 0 setrgbcolor
-board drawboard
-showpage
+%1 0 0 setrgbcolor
+%board drawboard
+
 
 %Takes in (x y board) returns true or false 
-/checkalive {
+/isalive {
     /board arg
     /y arg
     /x arg
@@ -85,7 +102,7 @@ showpage
     /alivecells 0 def
     3 {
         3 { 
-            i x add 12 lt 
+            i x add board length lt 
             {
             	i x add 0 lt 
         		{}
@@ -93,7 +110,7 @@ showpage
                 	j y add 0 lt 
                 	{}
                 	{
-                		j y add 12 lt
+                		j y add board length lt
                         {
                          	0 i eq 0 j eq eq  {} 
             				{
@@ -134,10 +151,52 @@ showpage
 } def
 
 
-0 0 board checkalive
-pstack
-pop
+%0 0 board isalive
+%pstack
+%pop
 
-3 10 board checkalive
+%0 4 board isalive
+%pstack
+%pop
+
+/nextgeneration {
+	/board arg
+    /x 0 def
+    /y 0 def
+    
+    /newboard board length array def
+
+    /j 0 def
+    newboard length {
+    	newboard j newboard length array put
+        /j j 1 add def
+    } repeat
+    
+    board length {
+    	board length {
+        	x y board isalive
+            { newboard x get y 1 put }
+            { newboard x get y 0 put }
+            ifelse
+        /x x 1 add def
+        } repeat
+        /x 0 def
+        /y y 1 add def
+    } repeat
+    newboard
+} def
+
+
+board drawboard
+
+%1 1 1 setrgbcolor
+%deleteboard drawboard
+
+1 0 1 setrgbcolor
+/newboard board nextgeneration def 
+newboard drawboard
 pstack
-pop
+
+
+
+showpage
