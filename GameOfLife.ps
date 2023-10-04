@@ -51,7 +51,26 @@
 ]
 } def
 
- 
+/returnrand {
+rand 2 mod
+} def
+
+/randomboard {
+[
+[ returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand]
+[ returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand]
+[ returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand]
+[ returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand]
+[ returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand]
+[ returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand]
+[ returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand]
+[ returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand]
+[ returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand]
+[ returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand]
+[ returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand]
+[ returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand]
+]
+} def
 
 % size x y drawsquare
 /drawsquare { 1 dict begin
@@ -218,7 +237,7 @@ end
 
 /twelveboards{
 	1 1 0 setrgbcolor
-	0 -64 funboard drawboard
+	0 -64 randomboard drawboard
     
     1 0 1 setrgbcolor
 	/newboard board nextgeneration def 
@@ -266,6 +285,7 @@ end
 } def
 twelveboards
 
+realtime srand rand pstack
 
 %srand
 showpage
