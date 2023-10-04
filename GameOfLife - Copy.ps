@@ -1,0 +1,291 @@
+/arg{exch def} def
+/board { 
+[
+[0 0 0 0 1 0 0 0 0 0 1 0]
+[0 0 0 1 1 1 0 0 0 0 0 1]
+[0 0 0 0 1 0 0 0 0 1 0 0]
+[0 0 0 0 1 0 0 0 1 0 1 0]
+[0 0 0 0 1 0 0 0 0 1 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 1 0 0 0 0 1 1 0]
+[0 0 0 0 1 0 0 0 1 1 1 0]
+[0 0 0 0 1 0 0 0 0 1 0 0]
+[0 0 0 0 1 0 0 0 0 0 0 0]
+] } def
+
+ 
+
+/deleteboard {
+[
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+]
+} def
+
+/funboard {
+[
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 1 0 0 0 0 0 0 0]
+[0 0 0 1 0 1 1 0 0 0 0 0]
+[0 0 0 0 1 0 0 1 0 0 0 0]
+[0 0 0 0 0 1 1 0 1 0 0 0]
+[0 0 0 0 0 0 0 1 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+]
+} def
+
+/returnrand {
+rand 2 mod
+} def
+
+/randomboard {
+[
+[ returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand]
+[ returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand]
+[ returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand]
+[ returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand]
+[ returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand]
+[ returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand]
+[ returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand]
+[ returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand]
+[ returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand]
+[ returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand]
+[ returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand]
+[ returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand returnrand]
+]
+} def
+
+% size x y drawsquare
+/drawsquare { 1 dict begin
+          /size arg
+          newpath
+          moveto
+          0 size rlineto
+          size 0 rlineto
+          0 size neg rlineto
+          size 0 rlineto
+          fill
+} def
+ 
+
+/drawboard { 1 dict begin
+    /board arg
+    /xoff arg
+    /yoff arg
+    
+    /x 0 def
+    /y 0 def
+    board length {
+        board 0 get length { 
+            1  board x get y get eq { 
+                /xpos x xoff add def 
+                /ypos y yoff add def
+                ypos 10 mul
+                board length xpos 1 add sub 10 mul
+                10 drawsquare
+            } if
+            /y y 1 add def
+        } repeat
+        /y 0 def
+        /x x 1 add def 
+    } repeat
+end
+} def
+ 
+
+/assert-are-equal {
+	0 dict begin
+    /observed arg
+    /expected arg
+    observed type expected type eq not 
+    observed expected eq not or {
+    (bad. expected something else) print stop} if
+	end
+} def
+
+
+/assert-are-equal-array {
+	0 dict begin
+    /observed arg
+    /expected arg
+    observed length expected length ne {(not the same length) print stop} if
+
+ 
+
+    0 1 observed length 1 sub
+    {/i arg 
+    observed i get expected i get ne {(not the same array) print stop} if
+    } for 
+    end
+} def
+
+
+%Takes in (x y board) returns the number of alive neighbors
+/isalive {
+    /board arg
+    /y arg
+    /x arg
+    /i -1 def 
+    /j -1 def
+    /alivecells 0 def
+    3 {
+        3 { 
+            i x add board length lt 
+            {
+            	i x add -1 gt 
+        		{            	
+                	j y add -1 gt 
+                	{
+                		j y add board length lt
+                        {
+                         	i x add x eq 
+                            j y add y eq
+                            and
+                            {} 
+            				{
+                            	/alivecells
+            					board i x add get 
+                				j y add get
+                				alivecells add def
+            				}
+            				ifelse
+                        }
+                        {}
+                        ifelse
+                	}
+                    {}
+                	ifelse
+            	}
+                {}
+            	ifelse 
+            }
+            {}
+            ifelse
+
+            /i i 1 add def 
+        } repeat
+        /i -1 def
+        /j j 1 add def 
+    } repeat
+    alivecells 
+} def
+
+ 
+%Takes in a board and returns a board of the next living generation
+/nextgeneration {
+	/board arg
+    /x 0 def
+    /y 0 def
+    
+    /newboard board length array def
+    /j 0 def
+    newboard length {
+    	newboard j newboard length array put
+        /j j 1 add def
+    } repeat
+
+    board length {
+    	board length {
+        	/alivecells x y board isalive def
+            
+            alivecells 4 lt 
+    		{ 
+    			alivecells 2 lt 
+    			{ newboard x get y 0 put }
+        		{ 
+                	alivecells 2 eq 
+                	{ 
+                    
+                    	board x get y get 1 eq 
+                    	{ newboard x get y 1 put }
+                        { newboard x get y 0 put }
+                        ifelse 
+                    }
+                    { newboard x get y 1 put }
+                    ifelse
+                }
+    			ifelse
+    		}
+    		{ newboard x get y 0 put }
+    		ifelse
+
+        	/x x 1 add def
+        } repeat
+    	/x 0 def
+    	/y y 1 add def
+    } repeat
+    newboard
+} def
+
+
+/twelveboards{
+	1 1 0 setrgbcolor
+	0 -64 randomboard drawboard
+    
+    1 0 1 setrgbcolor
+	/newboard board nextgeneration def 
+	14 -64 newboard drawboard
+
+	1 0 0 setrgbcolor
+	/newboard board nextgeneration def 
+	28 -64 newboard drawboard
+    
+    1 1 0 setrgbcolor
+	/newboard board nextgeneration def 
+	42 -64 newboard drawboard
+    
+    0 1 1 setrgbcolor
+	/newboard board nextgeneration def 
+	0 -50 newboard drawboard
+    
+    0 1 0 setrgbcolor
+	/newboard board nextgeneration def 
+	14 -50 newboard drawboard
+    
+    0 .5 1 setrgbcolor
+	/newboard board nextgeneration def 
+	28 -50 newboard drawboard
+    
+    1 0 .5 setrgbcolor
+	/newboard board nextgeneration def 
+	42 -50 newboard drawboard
+    
+    1 .5 .5 setrgbcolor
+	/newboard board nextgeneration def 
+	0 -36 newboard drawboard
+    
+    .5 .5 1 setrgbcolor
+	/newboard board nextgeneration def 
+	14 -36 newboard drawboard
+    
+    0 0 .5 setrgbcolor
+	/newboard board nextgeneration def 
+	28 -36 newboard drawboard
+    
+    .3 .7 0 setrgbcolor
+	/newboard board nextgeneration def 
+	42 -36 newboard drawboard
+} def
+twelveboards
+
+realtime srand rand pstack
+
+%srand
+showpage
