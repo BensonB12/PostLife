@@ -1,19 +1,21 @@
 /arg{exch def} def
 /board { 
 [
-[1 0 0 1 0 0 0 0 0 0 0 0]
-[0 0 1 1 1 0 0 0 0 0 0 0]
-[0 0 0 1 0 0 0 0 0 0 0 0]
-[0 0 0 1 0 0 0 0 0 0 0 0]
-[0 0 0 1 0 0 0 0 0 0 0 0]
-[0 0 0 1 0 0 0 0 0 0 0 0]
-[0 0 0 1 0 0 0 0 0 0 0 0]
-[0 0 0 1 0 0 0 0 0 0 0 0]
-[0 0 0 1 0 0 0 0 0 0 0 0]
-[0 0 0 1 0 0 0 0 0 0 0 0]
-[0 0 0 1 0 0 0 0 0 0 0 0]
-[0 0 0 1 0 0 0 0 0 0 0 0]
-] } def 
+[0 0 0 0 1 0 0 0 0 0 1 0]
+[0 0 0 1 1 1 0 0 0 0 0 1]
+[0 0 0 0 1 0 0 0 0 1 0 0]
+[0 0 0 0 1 0 0 0 1 0 1 0]
+[0 0 0 0 1 0 0 0 0 1 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 1 0 0 0 0 1 1 0]
+[0 0 0 0 1 0 0 0 1 1 1 0]
+[0 0 0 0 1 0 0 0 0 1 0 0]
+[0 0 0 0 1 0 0 0 0 0 0 0]
+] } def
+
+ 
 
 /deleteboard {
 [
@@ -32,6 +34,8 @@
 ]
 } def
 
+ 
+
 % size x y drawsquare
 /drawsquare { 1 dict begin
           /size arg
@@ -44,6 +48,8 @@
           fill
 } def
 
+ 
+
 /drawboard { 1 dict begin
     /board arg
     /x 0 def
@@ -53,9 +59,9 @@
             1  board x get y get eq { 
                 /xpos x def 
                 /ypos y def
-                ypos 50 mul
-                board length xpos 1 add sub 50 mul
-                50 drawsquare
+                ypos 10 mul
+                board length xpos 1 add sub 10 mul
+                10 drawsquare
             } if
             /y y 1 add def
         } repeat
@@ -63,7 +69,9 @@
         /x x 1 add def 
     } repeat
 end
-} def 
+} def
+
+ 
 
 /assert-are-equal {
 	0 dict begin
@@ -75,11 +83,15 @@ end
 	end
 } def
 
+ 
+
 /assert-are-equal-array {
 	0 dict begin
     /observed arg
     /expected arg
     observed length expected length ne {(not the same length) print stop} if
+
+ 
 
     0 1 observed length 1 sub
     {/i arg 
@@ -88,11 +100,16 @@ end
     end
 } def
 
+ 
+
 %1 0 0 setrgbcolor
 %board drawboard
 
+ 
 
-%Takes in (x y board) returns true or false 
+ 
+
+%Takes in (x y board) returns the number of alive neighbors
 /isalive {
     /board arg
     /y arg
@@ -104,15 +121,16 @@ end
         3 { 
             i x add board length lt 
             {
-            	i x add 0 lt 
-        		{}
-            	{
-                	j y add 0 lt 
-                	{}
+            	i x add -1 gt 
+        		{            	
+                	j y add -1 gt 
                 	{
                 		j y add board length lt
                         {
-                         	0 i eq 0 j eq eq  {} 
+                         	i x add x eq 
+                            j y add y eq
+                            and
+                            {} 
             				{
                             	/alivecells
             					board i x add get 
@@ -123,80 +141,97 @@ end
                         }
                         {}
                         ifelse
-                		
                 	}
+                    {}
                 	ifelse
-            		
             	}
+                {}
             	ifelse 
             }
             {}
             ifelse
-            
+
             /i i 1 add def 
         } repeat
         /i -1 def
         /j j 1 add def 
     } repeat
-    
-    alivecells 3 lt 
-    { 
-    	alivecells 0 eq
-    	{ false }
-        { true }
-    	ifelse
-    }
-    { false }
-    ifelse
+    alivecells 
 } def
 
+ 
+
+ 
 
 %0 0 board isalive
 %pstack
 %pop
 
+ 
+
 %0 4 board isalive
 %pstack
 %pop
 
+ 
+%Takes in a board and returns a board of the next living generation
 /nextgeneration {
 	/board arg
     /x 0 def
     /y 0 def
     
     /newboard board length array def
-
     /j 0 def
     newboard length {
     	newboard j newboard length array put
         /j j 1 add def
     } repeat
-    
+
     board length {
     	board length {
-        	x y board isalive
-            { newboard x get y 1 put }
-            { newboard x get y 0 put }
-            ifelse
-        /x x 1 add def
+        	/alivecells x y board isalive def
+            
+            alivecells 4 lt 
+    		{ 
+    			alivecells 2 lt 
+    			{ newboard x get y 0 put }
+        		{ 
+                	alivecells 2 eq 
+                	{ 
+                    
+                    	board x get y get 1 eq 
+                    	{ newboard x get y 1 put }
+                        { newboard x get y 0 put }
+                        ifelse 
+                    }
+                    { newboard x get y 1 put }
+                    ifelse
+                }
+    			ifelse
+    		}
+    		{ newboard x get y 0 put }
+    		ifelse
+
+        	/x x 1 add def
         } repeat
-        /x 0 def
-        /y y 1 add def
+    	/x 0 def
+    	/y y 1 add def
     } repeat
     newboard
 } def
 
-
 board drawboard
 
-%1 1 1 setrgbcolor
+%1 1 2 setrgbcolor
 %deleteboard drawboard
 
 1 0 1 setrgbcolor
 /newboard board nextgeneration def 
 newboard drawboard
-pstack
 
+ 
 
+ 
 
+%srand
 showpage
