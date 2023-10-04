@@ -34,6 +34,23 @@
 ]
 } def
 
+/funboard {
+[
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 1 0 0 0 0 0 0 0]
+[0 0 0 1 0 1 1 0 0 0 0 0]
+[0 0 0 0 1 0 0 1 0 0 0 0]
+[0 0 0 0 0 1 1 0 1 0 0 0]
+[0 0 0 0 0 0 0 1 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+[0 0 0 0 0 0 0 0 0 0 0 0]
+]
+} def
+
  
 
 % size x y drawsquare
@@ -47,18 +64,20 @@
           size 0 rlineto
           fill
 } def
-
  
 
 /drawboard { 1 dict begin
     /board arg
+    /xoff arg
+    /yoff arg
+    
     /x 0 def
     /y 0 def
     board length {
         board 0 get length { 
             1  board x get y get eq { 
-                /xpos x def 
-                /ypos y def
+                /xpos x xoff add def 
+                /ypos y yoff add def
                 ypos 10 mul
                 board length xpos 1 add sub 10 mul
                 10 drawsquare
@@ -70,7 +89,6 @@
     } repeat
 end
 } def
-
  
 
 /assert-are-equal {
@@ -83,7 +101,6 @@ end
 	end
 } def
 
- 
 
 /assert-are-equal-array {
 	0 dict begin
@@ -100,14 +117,6 @@ end
     end
 } def
 
- 
-
-%1 0 0 setrgbcolor
-%board drawboard
-
- 
-
- 
 
 %Takes in (x y board) returns the number of alive neighbors
 /isalive {
@@ -160,20 +169,6 @@ end
 } def
 
  
-
- 
-
-%0 0 board isalive
-%pstack
-%pop
-
- 
-
-%0 4 board isalive
-%pstack
-%pop
-
- 
 %Takes in a board and returns a board of the next living generation
 /nextgeneration {
 	/board arg
@@ -220,18 +215,57 @@ end
     newboard
 } def
 
-board drawboard
 
-%1 1 2 setrgbcolor
-%deleteboard drawboard
+/twelveboards{
+	1 1 0 setrgbcolor
+	0 -64 funboard drawboard
+    
+    1 0 1 setrgbcolor
+	/newboard board nextgeneration def 
+	14 -64 newboard drawboard
 
-1 0 1 setrgbcolor
-/newboard board nextgeneration def 
-newboard drawboard
+	1 0 0 setrgbcolor
+	/newboard board nextgeneration def 
+	28 -64 newboard drawboard
+    
+    1 1 0 setrgbcolor
+	/newboard board nextgeneration def 
+	42 -64 newboard drawboard
+    
+    0 1 1 setrgbcolor
+	/newboard board nextgeneration def 
+	0 -50 newboard drawboard
+    
+    0 1 0 setrgbcolor
+	/newboard board nextgeneration def 
+	14 -50 newboard drawboard
+    
+    0 .5 1 setrgbcolor
+	/newboard board nextgeneration def 
+	28 -50 newboard drawboard
+    
+    1 0 .5 setrgbcolor
+	/newboard board nextgeneration def 
+	42 -50 newboard drawboard
+    
+    1 .5 .5 setrgbcolor
+	/newboard board nextgeneration def 
+	0 -36 newboard drawboard
+    
+    .5 .5 1 setrgbcolor
+	/newboard board nextgeneration def 
+	14 -36 newboard drawboard
+    
+    0 0 .5 setrgbcolor
+	/newboard board nextgeneration def 
+	28 -36 newboard drawboard
+    
+    .3 .7 0 setrgbcolor
+	/newboard board nextgeneration def 
+	42 -36 newboard drawboard
+} def
+twelveboards
 
- 
-
- 
 
 %srand
 showpage
